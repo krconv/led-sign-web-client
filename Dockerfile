@@ -1,8 +1,7 @@
-FROM node:12
+FROM node:12 as build
 WORKDIR /app
 
 # install dependencies
-RUN yarn global add serve
 COPY package.json yarn.lock ./
 RUN yarn install
 
@@ -10,7 +9,10 @@ RUN yarn install
 COPY . .
 RUN yarn run build
 
-ENV PORT=8080
-EXPOSE ${PORT}
 
-CMD ["serve", "--single", "serve"]
+# build the serving container
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
