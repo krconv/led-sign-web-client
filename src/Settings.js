@@ -36,9 +36,11 @@ export default function Settings({
   }, [setProtocol, setHost, setSecret]);
 
   useEffect(() => {
-    cookie.save("protocol", protocol);
-    cookie.save("host", host);
-    cookie.save("secret", secret);
+    const tenYears = 10 * 365 * 24 * 60 * 60 * 1000;
+    const options = { expires: new Date(Date.now() + tenYears) };
+    cookie.save("protocol", protocol, options);
+    cookie.save("host", host, options);
+    cookie.save("secret", secret, options);
   }, [protocol, host, secret]);
 
   return (
